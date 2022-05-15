@@ -71,7 +71,7 @@ export default {
   data () {
     return {
       info: {
-        user: '627f45afcb9c03c97897f7bd',
+        user: '628088ed99e46ea03ea2be80',
         content: '',
         type: 'person',
         tags: ['你好'],

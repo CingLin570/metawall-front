@@ -9,10 +9,10 @@
             <img src="~@/assets/img/banner.png" alt="signin" class="img-fluid" />
           </div>
           <div class="col-md-6">
-            <h1 class="mb-3 m-auto d-block overflow-hidden text-nowrap logo">
+            <h1 class="mb-3 text-center text-primary metawall-logo">
               MetaWall
             </h1>
-            <p class="text-center">到元宇宙展開全新社交圈</p>
+            <p class="h4 text-center">到元宇宙展開全新社交圈</p>
             <form method="">
               <div class="form-group mb-2">
                 <label for="userEmail"></label>

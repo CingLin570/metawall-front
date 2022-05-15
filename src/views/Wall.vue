@@ -28,7 +28,6 @@
                   id="button-search"
                   @click="getPosts()"
                 >
-                  <!-- <span class="material-icons-outlined"> search </span> -->
                   <i class="bi bi-search fs-5"></i>
                 </button>
               </div>
@@ -138,12 +137,11 @@ export default {
       }
       this.$http(config).then((res) => {
         if (res.data.status === 'success') {
-          this.isLoading = false
           this.posts = res.data.message
-          console.log(res.data)
         } else {
           console.log(res.data.status)
         }
+        this.isLoading = false
       }).catch(error => {
         this.isLoading = false
         console.log(error)
