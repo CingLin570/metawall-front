@@ -1,0 +1,13 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+
+@import './helpers/variables';
+
+@import "~bootstrap/scss/bootstrap";
+
+@import './helpers/shadow';
+@import './helpers/hover';
+@import './helpers/active';
+@import './base/base';
+@import './pages/custom';

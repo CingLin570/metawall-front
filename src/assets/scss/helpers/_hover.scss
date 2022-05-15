@@ -1,0 +1,19 @@
+.btn {
+  &-primary {
+    &:hover {
+      background-color: #eec32a;
+      color: $dark;
+    }
+  }
+}
+
+.hover {
+  &-primary {
+    &:hover {
+      .btn-icon {
+        background-color: $primary !important;
+        color: $white;
+      }
+    }
+  }
+}
