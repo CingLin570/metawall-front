@@ -3,6 +3,7 @@
           <div class="Sidebar-card bg-white border border-dark border-2 px-4 py-5">
             <div class="d-grid gap-2 mb-4">
               <router-link to="/post" class="btn btn-primary shadow-black rounded-3
+              py-2 fs-5
               border-dark">
                 張貼動態
               </router-link>
