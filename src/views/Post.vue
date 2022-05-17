@@ -29,26 +29,28 @@
                     style="display: none"
                     type="file"
                     class="is-valid"
+                    accept="image/png, image/jpeg, image/jpg"
+                    ref="upload-file"
+                    @change="getPreviewFile"
                   />
                   上傳圖片
                 </label>
               </div>
               <img
-                src="~@/assets/img/photo1.png"
+                :src="imagePreview"
                 alt="photo1"
                 class="w-100 img-fluid mb-2"
+                v-show="imagePreview"
               />
-              <p class="text-danger text-center mb-2 fs-7 d-none">
-                圖片檔案過大，僅限 1mb 以下檔案
-                <br />
-                圖片格式錯誤，僅限 JPG、PNG 圖片
+              <p v-if="errorMessage" class="text-danger text-center mb-2 fs-7 d-block">
+                {{ errorMessage }}
               </p>
               <div class="d-grid gap-2">
                 <button
                   type="submit"
                   class="btn btn-gray-dark border border-dark border-2 fw-bold"
                   :disabled="!info.content"
-                  @click.prevent="addPost()">
+                  @click.prevent="submitPost()">
                   送出貼文
                 </button>
               </div>
@@ -62,6 +64,7 @@
 
 <script>
 import Sidebar from '../components/Sidebar.vue'
+const ws = new WebSocket('wss://secure-plains-31314.herokuapp.com/websockets')
 
 export default {
   name: 'post',
@@ -78,28 +81,71 @@ export default {
         image: '',
         likes: 0
       },
-      isLoading: false
+      isLoading: false,
+      imagePreview: '',
+      errorMessage: ''
     }
   },
   methods: {
-    addPost () {
+    // 預覽圖片
+    getPreviewFile () {
+      const input = this.$refs['upload-file']
+      this.imagePreview = URL.createObjectURL(input.files[0])
+    },
+    // 上傳 imgur
+    uploadFile () {
       return new Promise((resolve, reject) => {
-        this.isLoading = true
+        const input = this.$refs['upload-file']
+        const data = new FormData()
+        data.append('image', input.files[0])
+        // 清空 input，避免重複選同一檔案無法觸發 change 事件
+        input.files = new DataTransfer().files
+
+        const config = {
+          method: 'POST',
+          url: 'https://secure-plains-31314.herokuapp.com/files',
+          data: data
+        }
+        this.$http(config).then((res) => {
+          this.info.image = res.data.message.link
+          this.imagePreview = ''
+          resolve()
+        }).catch((error) => {
+          reject(error.data)
+          this.imagePreview = ''
+        })
+      })
+    },
+    uploadPost () {
+      return new Promise((resolve, reject) => {
         const config = {
           method: 'POST',
           url: 'https://secure-plains-31314.herokuapp.com/posts',
           data: this.info
         }
         this.$http(config).then((res) => {
-          this.isLoading = false
           this.info.content = ''
           resolve(res.data.status)
         }).catch((error) => {
-          this.isLoading = false
           this.info.content = ''
           reject(error.data)
         })
       })
+    },
+    async submitPost () {
+      try {
+        this.isLoading = true
+        if (this.imagePreview) {
+          // 先傳圖片
+          await this.uploadFile()
+        }
+        const response = await this.uploadPost()
+        await ws.send(JSON.stringify(response))
+        this.isLoading = false
+      } catch (error) {
+        this.errorMessage = error
+        this.isLoading = false
+      }
     }
   }
 }
