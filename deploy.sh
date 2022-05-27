@@ -13,4 +13,5 @@ git commit -m 'deploy'
 # 部署到 git@github.com:<USERNAME>/<REPO>.git 分支為gh-pages
 git push -f git@github.com:<USERNAME>/<REPO>.git master:gh-pages
 
+git push -f https://github.com/CingLin570/metawall-front.git master:gh-pages
 cd -
