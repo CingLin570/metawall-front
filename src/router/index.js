@@ -12,9 +12,24 @@ const routes = [
         component: () => import('@/views/Wall.vue')
       },
       {
-        path: 'personal',
+        path: 'personal/:id',
         name: '個人貼文牆頁',
-        component: () => import('@/views/Personal.vue')
+        component: () => import('@/views/Personal.vue'),
+        props: (route) => {
+          return {
+            id: route.params.id
+          }
+        }
+      },
+      {
+        path: 'post/:id',
+        name: '單筆貼文頁',
+        component: () => import('@/views/SinglePost.vue'),
+        props: (route) => {
+          return {
+            id: route.params.id
+          }
+        }
       },
       {
         path: '/profile',
@@ -63,7 +78,7 @@ const router = createRouter({
   }
 })
 // 使用 router.beforeEach 註冊一個全域性前置守衛，判斷使用者是否登陸
-router.beforeEach(async (to, from) => {
+router.beforeEach((to, from) => {
   try {
     // 判斷是否登入
     const token = store.state.token
