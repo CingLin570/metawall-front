@@ -30,10 +30,14 @@ export default createStore({
   )],
   // 存放數據
   state: {
-    initialState
+    initialState,
+    isLoading: false
   },
   // 唯一可以同步修改state的地方
   mutations: {
+    loading (state, status) {
+      state.isLoading = status
+    },
     setInfo (state, response) { // 取得會員資訊
       state.info = response
     },
@@ -47,6 +51,9 @@ export default createStore({
   },
   // 非同步事件只能寫在 actions(不能直接改變 state)
   actions: {
+    updateLoading (context, status) {
+      context.commit('loading', status)
+    }
   },
   modules: {
   }
