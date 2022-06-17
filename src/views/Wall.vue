@@ -1,128 +1,15 @@
 <template>
-  <Loading :active="isLoading"></Loading>
-  <section class="container mt-7 px-lg-12">
+  <section class="container mt-7 mb-7 mb-md-0 px-lg-12">
     <div class="row">
       <div class="col-md-7">
-        <div class="row">
-          <div class="col-md-4 pe-1 mb-md-2 mb-3">
-            <select
-              id="newPost"
-              class="form-select py-2"
-              v-model="search.timeSort"
-              @change="getPosts()"
-            >
-              <option selected value="desc">最新貼文</option>
-              <option value="asc">最舊貼文</option>
-            </select>
-          </div>
-          <div class="col-md-8">
-            <div class="input-group mb-3">
-              <input
-                type="text"
-                class="form-control"
-                placeholder="搜尋貼文"
-                aria-label="search"
-                aria-describedby="button-search"
-                v-model="search.q"
-                @keyup.enter="getPosts()"
-              />
-              <button
-                class="btn btn-primary fs-5 rounded-0 px-3 border-dark"
-                type="button"
-                id="button-search"
-                @click="getPosts()"
-              >
-                <i class="bi bi-search fs-5"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-        <template v-if="posts.length === 0">
-          <div class="card border-2 shadow-black">
-            <div class="card-header bg-white">
-              <div class="d-flex">
-                <div
-                  class="p-1 bg-danger border border-light rounded-circle me-1"
-                ></div>
-                <div
-                  class="p-1 bg-success border border-light rounded-circle me-1"
-                ></div>
-                <div
-                  class="
-                    p-1
-                    rounded-circle
-                    border border-light
-                    rounded-circle
-                    bg-warning
-                  "
-                ></div>
-              </div>
-            </div>
-            <div class="card-body py-5">
-              <p class="card-text text-muted text-center">
-                目前尚無動態，新增一則貼文吧！
-              </p>
-            </div>
-          </div>
+        <SearchBar @search="getPosts"></SearchBar>
+        <template v-if="posts?.length === 0">
+          <NoPostsCard :message="'目前尚無動態!'"></NoPostsCard>
         </template>
         <template v-else>
           <ul class="ps-0">
-            <li
-              class="card h-100 py-4 px-4 mb-3 border-2 shadow-black"
-              v-for="post in posts"
-              :key="'post.name' + post._id"
-            >
-              <div class="d-flex align-items-center mb-3">
-                <img
-                  class="me-3 img-fluid"
-                  :src="post.user.photo"
-                  alt="user1"
-                  v-if="post.user.photo !== ''"
-                />
-                <div class="d-flex flex-column mt-2">
-                  <a href="#" class="mb-0 fw-bold">{{ post.user.name }}</a>
-                  <small class="text-muted">{{
-                    getDate(post.createdAt)
-                  }}</small>
-                </div>
-              </div>
-              <p>{{ post.content }}</p>
-              <img
-                :src="post.image"
-                alt="photo1"
-                class="img-fluid"
-                v-if="post.image"
-              />
-              <div class="d-flex mt-3">
-                <button type="button" class="btn p-0">
-                  <i class="bi bi-hand-thumbs-up fs-5 me-2 text-primary"></i>
-                </button>
-                <p class="my-2 fs-5 text-primary">{{ post.likes }}</p>
-              </div>
-              <div class="d-flex mt-3">
-                <img
-                  src="~@/assets/img/user1.png"
-                  alt="usr1"
-                  class="img-fluid me-1"
-                />
-                <div class="input-group">
-                  <input
-                    type="text"
-                    class="form-control"
-                    placeholder="留言..."
-                    aria-label="message"
-                    aria-describedby="button-message"
-                  />
-                  <button
-                    class="btn btn-primary px-4 rounded-0 border-dark"
-                    type="button"
-                    id="button-message"
-                  >
-                    留言
-                  </button>
-                </div>
-              </div>
-            </li>
+            <PostCard :post="post" v-for="post in posts"
+            :key="post.name + post._id" @update="getPosts"></PostCard>
           </ul>
         </template>
       </div>
@@ -135,6 +22,9 @@
 <script>
 import Sidebar from '../components/Sidebar.vue'
 import SidebarSm from '../components/SidebarSm.vue'
+import NoPostsCard from '../components/NoPostsCard.vue'
+import SearchBar from '../components/SearchBar.vue'
+import PostCard from '../components/PostCard/Index.vue'
 import { mapState } from 'vuex'
 const ws = new WebSocket('wss://secure-plains-31314.herokuapp.com/websockets')
 
@@ -142,16 +32,15 @@ export default {
   name: 'wall',
   components: {
     Sidebar,
-    SidebarSm
+    SidebarSm,
+    NoPostsCard,
+    PostCard,
+    SearchBar
   },
   data () {
     return {
-      posts: [],
-      search: {
-        timeSort: 'desc',
-        q: ''
-      },
-      isLoading: false
+      posts: '',
+      search: {}
     }
   },
   computed: {
@@ -161,12 +50,13 @@ export default {
     })
   },
   methods: {
-    getPosts () {
+    getPosts (search = this.search) {
       return new Promise((resolve, reject) => {
-        this.isLoading = true
+        this.search = search
+        this.$store.dispatch('updateLoading', true)
         const config = {
           method: 'GET',
-          url: `${process.env.VUE_APP_APIPATH}/posts`,
+          url: `${process.env.VUE_APP_APIPATH}/api/v1/posts`,
           headers: {
             authorization: `Bearer ${this.token}`
           },
@@ -176,18 +66,13 @@ export default {
           .then((res) => {
             this.posts = res.data.message
             resolve(res.data.message)
-            this.isLoading = false
+            this.$store.dispatch('updateLoading', false)
           })
           .catch((error) => {
             reject(error.response.data.message)
-            this.isLoading = false
+            this.$store.dispatch('updateLoading', false)
           })
       })
-    },
-    getDate (createdAt) {
-      const date = new Date(createdAt).toLocaleDateString()
-      const time = new Date(createdAt).toTimeString().split(' ')[0]
-      return `${date} ${time}`
     }
   },
   created () {
@@ -204,4 +89,8 @@ export default {
 </script>
 
 <style>
+.img {
+  height: 50px;
+  width: 50px;
+}
 </style>
