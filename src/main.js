@@ -4,9 +4,9 @@ import { Field, Form, ErrorMessage, defineRule, configure } from 'vee-validate'
 // 匯入 vee-validate 相關規則
 import { required, email, min, confirmed, mimes, regex } from '@vee-validate/rules'
 // 匯入多國語系的功能
-import { localize, setLocale } from '@vee-validate/i18n'
+import { localize } from '@vee-validate/i18n'
 // 匯入繁體中文語系檔案
-import zhTW from '@vee-validate/i18n/dist/locale/zh_TW.json'
+// import zhTW from '@vee-validate/i18n/dist/locale/zh_TW.json'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import 'bootstrap'
@@ -25,11 +25,26 @@ defineRule('mimes', mimes)
 defineRule('regex', regex)
 // 設定 vee-validate 全域規則
 configure({
-  generateMessage: localize({ zh_TW: zhTW }), // 載入繁體中文語系
+  generateMessage: localize('en', {
+    fields: {
+      confirmPassword: {
+        required: '確認密碼為必填',
+        confirmed: '與密碼不一致'
+      },
+      email: {
+        required: '電子信箱為必填',
+        email: '必須為有效的電子信箱'
+      },
+      name: {
+        required: '暱稱為必填',
+        min: '暱稱欄位必須至少兩個字元'
+      }
+    }
+  }), // 載入繁體中文語系
   validateOnInput: true // 當輸入任何內容直接進行驗證
 })
 // 設定預設語系
-setLocale('zh_TW')
+// setLocale('zh_TW')
 
 const app = createApp(App).use(store)
 // 註冊 vee-validate 三個全域元件
