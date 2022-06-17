@@ -1,8 +1,6 @@
 <template>
-  <Loading :active="isLoading"></Loading>
   <Form v-slot="{ errors }" class="needs-validation" @submit="submitSignup">
-    <div class="form-group mb-2">
-      <label for="userName"></label>
+    <div class="form-group mb-3">
       <Field
         type="text"
         class="form-control"
@@ -16,30 +14,28 @@
       </Field>
       <error-message name="name" class="invalid-feedback"></error-message>
     </div>
-    <div class="form-group">
-      <label for="userEmail"></label>
+    <div class="form-group mb-3">
       <Field
         type="email"
-        class="form-control"
+        class="form-control font-azeret"
         :class="{ 'is-invalid': errors['email'] }"
         id="userEmail"
         name="email"
         aria-describedby="emailHelp"
-        placeholder="電子信箱"
+        placeholder="Email"
         required
         rules="email|required"
         v-model="user.email">
       </Field>
       <error-message name="email" class="invalid-feedback"></error-message>
     </div>
-    <div class="form-group">
-      <label for="userPassword"></label>
+    <div class="form-group mb-3">
       <Field
         type="password"
-        class="form-control"
+        class="form-control font-azeret"
         :class="{ 'is-invalid': errors['password'] }"
         id="userPassword"
-        placeholder="密碼"
+        placeholder="Password"
         name="password"
         required
         :rules="validatePassword"
@@ -47,14 +43,13 @@
         </Field>
         <error-message name="password" class="invalid-feedback"></error-message>
     </div>
-    <div class="form-group mb-4">
-      <label for="confirmPassword"></label>
+    <div class="form-group mb-3">
       <Field
         type="password"
-        class="form-control"
+        class="form-control font-azeret"
         :class="{ 'is-invalid': errors['confirmPassword'] }"
         id="confirmPassword"
-        placeholder="確認密碼"
+        placeholder="confirmPassword"
         name="confirmPassword"
         required
         rules="required|confirmed:@password"
@@ -79,7 +74,6 @@
 <script>
 export default {
   name: 'NavSignUp',
-  emits: ['currentPage'],
   data () {
     return {
       user: {
@@ -88,10 +82,10 @@ export default {
         password: '', // 密碼
         confirmPassword: '' // 確認密碼
       },
-      errorMessage: '',
-      isLoading: false
+      errorMessage: ''
     }
   },
+  emits: ['current-page'],
   computed: {
     formIsFinished () {
       return this.user.email && this.user.name && this.user.password && this.user.confirmPassword
@@ -111,17 +105,18 @@ export default {
       return true
     },
     submitSignup () {
-      this.isLoading = true
+      this.$store.dispatch('updateLoading', true)
       const config = {
         method: 'POST',
-        url: `${process.env.VUE_APP_APIPATH}/user/register`,
+        url: `${process.env.VUE_APP_APIPATH}/api/v1/user/register`,
         data: this.user
       }
       this.$http(config).then(response => {
-        this.isLoading = false
-        this.$emit('current-page', 'login')
+        this.$store.dispatch('updateLoading', false)
+        Object.assign(this.$data, this.$options.data())
+        // this.$emit('current-page', 'Login')
       }).catch(error => {
-        this.isLoading = false
+        this.$store.dispatch('updateLoading', false)
         if (error.response) {
           this.errorMessage = error.response.data.message
         }

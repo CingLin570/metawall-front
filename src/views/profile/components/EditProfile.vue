@@ -1,17 +1,16 @@
 <template>
-<Loading :active="isLoading"></Loading>
   <div class="card-body bg-white px-10 py-5">
-    <from class="needs-validation" novalidate>
+    <form class="needs-validation" novalidate>
       <img
         src="~@/assets/img/user.png"
         alt="user"
-        class="img-fluid w-50 mx-auto mb-4 d-block"
+        class="img-fluid w-50 mx-auto mb-4 d-block rounded-circle"
         v-if="!photoPreview"
       />
       <img
         :src="photoPreview"
         alt="user"
-        class="img-fluid w-50 mx-auto mb-4 d-block"
+        class="img-fluid w-50 mx-auto mb-4 d-block rounded-circle"
         v-else
       />
       <div class="input-group mb-3">
@@ -62,15 +61,11 @@
           <label class="form-check-label" for="female"> 女性 </label>
         </div>
       </div>
-      <p class="text-center text-danger fs-7 d-none">
-        1.圖片寬高比必需為 1:1，請重新輸入 <br />2. 解析度寬度至少
-        300像素以上，請重新輸入
-      </p>
       <div class="d-grid">
         <button
-          type="submit"
+          type="button"
           class="btn btn-primary border border-dark border-2 mb-2 shadow-black"
-          @click.prevent="submit()"
+          @click="submit()"
         >
           送出更新
         </button>
@@ -81,7 +76,7 @@
         {{ errorMessage }}
         </p>
       </div>
-    </from>
+    </form>
   </div>
 </template>
 
@@ -100,7 +95,7 @@ export default {
       photoPreview: '', // 預覽大頭貼
       isUpdatePhoto: false, // 是否更新大頭貼
       errorMessage: '',
-      isLoading: false
+      type: 'avatar'
     }
   },
   computed: {
@@ -115,22 +110,22 @@ export default {
     ...mapMutations(['setInfo']),
     getProfile () {
       return new Promise((resolve, reject) => {
-        this.isLoading = true
+        this.$store.dispatch('updateLoading', true)
         const config = {
           method: 'GET',
-          url: `${process.env.VUE_APP_APIPATH}/user/profile`,
+          url: `${process.env.VUE_APP_APIPATH}/api/v1/user/profile`,
           headers: {
             authorization: `Bearer ${this.token}`
           }
         }
         this.$http(config)
           .then((response) => {
-            this.isLoading = false
+            this.$store.dispatch('updateLoading', false)
             this.setProfile(response.data.message)
             resolve(response.data.message)
           })
           .catch((error) => {
-            this.isLoading = false
+            this.$store.dispatch('updateLoading', false)
             reject(error.response.data.message)
           })
       })
@@ -151,13 +146,13 @@ export default {
         const input = this.$refs['upload-file']
         const data = new FormData()
         data.append('image', input.files[0])
-        data.append('name', this.name)
+        data.append('type', this.type)
         // 清空 input，避免重複選同一檔案無法觸發 change 事件
         input.files = new DataTransfer().files
 
         const config = {
           method: 'POST',
-          url: `${process.env.VUE_APP_APIPATH}/file`,
+          url: `${process.env.VUE_APP_APIPATH}/api/v1/file`,
           headers: {
             authorization: `Bearer ${this.token}`
           },
@@ -180,7 +175,7 @@ export default {
       return new Promise((resolve, reject) => {
         const config = {
           method: 'PATCH',
-          url: `${process.env.VUE_APP_APIPATH}/user/profile`,
+          url: `${process.env.VUE_APP_APIPATH}/api/v1/user/profile`,
           headers: {
             authorization: `Bearer ${this.token}`
           },
@@ -197,7 +192,7 @@ export default {
     },
     async submit () {
       try {
-        this.isLoading = true
+        this.$store.dispatch('updateLoading', true)
         if (this.isUpdatePhoto) {
           await this.uploadFile() // 先上傳圖片
         }
@@ -205,15 +200,17 @@ export default {
         this.setProfile(response)
         this.setInfo({ // 更新 vuex
           name: response.name,
-          photo: response.photo
+          photo: response.photo,
+          _id: response._id
         })
         this.errorMessage = ''
-        this.isLoading = false
+        this.$store.dispatch('updateLoading', false)
       } catch (error) {
         if (!this.errorMessage) {
           this.errorMessage = error
         }
-        this.isLoading = false
+        this.$store.dispatch('updateLoading', false)
+        this.getProfile()
       }
     }
   }

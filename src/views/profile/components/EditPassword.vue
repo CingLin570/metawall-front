@@ -1,5 +1,4 @@
 <template>
-<Loading :active="isLoading"></Loading>
     <div class="card-body bg-white px-10 py-5">
       <Form v-slot="{ errors }" class="needs-validation">
         <div class="mb-3">
@@ -32,10 +31,10 @@
         </div>
         <div class="d-grid">
           <button
-            type="submit"
+            type="button"
             class="btn btn-gray-dark border border-dark border-2 shadow-blac mb-2"
             :disabled="!formIsFinished"
-            @click.prevent="submit()"
+            @click="submit()"
           >
             重設密碼
           </button>
@@ -61,8 +60,7 @@ export default {
         password: '',
         confirmPassword: ''
       },
-      errorMessage: '',
-      isLoading: false
+      errorMessage: ''
     }
   },
   computed: {
@@ -88,10 +86,10 @@ export default {
       return true
     },
     submit () {
-      this.isLoading = true
+      this.$store.dispatch('updateLoading', true)
       const config = {
         method: 'PATCH',
-        url: `${process.env.VUE_APP_APIPATH}/user/updatePassword`,
+        url: `${process.env.VUE_APP_APIPATH}/api/v1/user/updatePassword`,
         headers: {
           authorization: `Bearer ${this.token}`
         },
@@ -99,12 +97,12 @@ export default {
       }
       this.$http(config)
         .then((res) => {
-          this.isLoading = false
+          this.$store.dispatch('updateLoading', false)
           this.setToken(res.data.user.token)
           Object.assign(this.$data, this.$options.data())
         })
         .catch((error) => {
-          this.isLoading = false
+          this.$store.dispatch('updateLoading', false)
           this.errorMessage = error.response.data.message
         })
     }

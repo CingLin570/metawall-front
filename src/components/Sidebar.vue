@@ -11,16 +11,23 @@
       </div>
       <ul class="ps-0">
         <li class="card h-100 border-0 mb-4">
-          <a href="#">
-            <div class="d-flex align-items-center">
+          <router-link :to="{ name: '個人貼文牆頁', params: { id: info._id } }">
+                        <div class="d-flex align-items-center">
               <img
-                class="mx-3 img-fluid"
+                class="img mx-3 img-fluid rounded-circle"
                 :src="info.photo"
                 :alt="info.name"
+                v-if="info.photo"
+              />
+              <img
+                class="img mx-3 img-fluid rounded-circle"
+                src="~@/assets/img/user.png"
+                alt="user2"
+                v-else
               />
               <p class="my-auto fw-bold">{{ info.name }}</p>
             </div>
-          </a>
+          </router-link>
         </li>
         <li class="card h-100 border-0 mb-4">
           <router-link to="/follower" class="hover-primary">
@@ -87,11 +94,15 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .Sidebar-card {
   .btn-icon {
     width: 50px;
     height: 50px;
   }
+}
+.img {
+  height: 50px;
+  width: 50px;
 }
 </style>

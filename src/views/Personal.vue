@@ -1,91 +1,62 @@
 <template>
-  <section class="container mt-7 px-lg-12">
+  <section class="container mt-7 mb-7 mb-md-0 px-lg-12">
     <div class="row">
       <div class="col-md-7">
-        <div class="card mb-5 rounded-0 border-2 position-relative">
+        <div class="card mb-5 border-2 position-relative">
           <div class="d-flex align-items-center">
             <img
-              src="~@/assets/img/user6.png"
-              alt="user6"
-              class="p-4 bg-secondary me-1 img-fluid"
+              class="image bg-secondary me-1 img-fluid"
+              src="~@/assets/img/user.png"
+              alt="user"
+              v-if="!personal.photo"
+            />
+            <img
+              class="image bg-secondary me-1 img-fluid"
+              :src="personal.photo"
+              alt="user"
+              v-else
             />
             <div class="d-flex justify-content-between w-100">
               <div>
-                <p class="mb-0 fw-bold">阿爾敏</p>
-                <small>987,987 人追蹤</small>
+                <p class="mb-0 fw-bold">{{ personal.name }}</p>
+                <small>{{ personal.followerLength }} 人追蹤</small>
               </div>
-              <button
-                type="button"
-                class="btn btn-warning me-2 px-4 shadow-black d-none"
-              >
-                追蹤
-              </button>
-              <button
-                type="button"
-                class="btn btn-gray-light me-2 px-4 shadow-black"
-              >
-                取消追蹤
-              </button>
+              <template v-if="!isSelf">
+                <div>
+                  <button
+                    type="button"
+                    class="btn btn-warning me-2 px-4 shadow-black"
+                    v-if="!personal.checkFollow"
+                    @click="addFollow"
+                  >
+                    追蹤
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-gray-light me-2 px-4 shadow-black"
+                    v-else
+                    @click="removeFollow"
+                  >
+                    取消追蹤
+                  </button>
+                </div>
+              </template>
             </div>
           </div>
           <div
-            class="position-absolute border border-dark border-2 w-100 py-6"
-            style="z-index: -1; top: 10px; left: -6px"
+            class="position-absolute rounded border border-dark border-2 w-100 py-6 bg-white"
+            style="z-index: -1; top: 6px; left: -6px"
           ></div>
         </div>
-        <div class="row">
-          <div class="col-md-4 pe-1 mb-md-2 mb-3">
-            <select id="newPost" class="form-select py-2">
-              <option selected>最新貼文</option>
-              <option>...</option>
-            </select>
-          </div>
-          <div class="col-md-8">
-            <div class="input-group mb-3">
-              <input
-                type="text"
-                class="form-control"
-                placeholder="搜尋貼文"
-                aria-label="search"
-                aria-describedby="button-search"
-              />
-              <button class="btn btn-primary" type="button" id="button-search">
-                <i class="bi bi-search fs-5"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-        <ul class="ps-0">
-          <li class="card h-100 py-4 px-4 mb-3 border-2 shadow-black">
-            <div class="d-flex align-items-center mb-3">
-              <img
-                class="me-3 img-fluid"
-                src="~@/assets/img/user6.png"
-                alt="user6"
-              />
-              <div class="d-flex flex-column mt-2">
-                <a href="#" class="mb-0 fw-bold">阿爾敏</a>
-                <small class="text-muted">2022/1/10 12:00</small>
-              </div>
-            </div>
-            <p>今天找到一張大海的照片<br />太美拉～～～</p>
-            <img
-              src="~@/assets/img/photo3.png"
-              alt="photo2"
-              class="img-fluid"
-            />
-          </li>
-          <li class="card h-100 py-4 px-4 mb-3 border-2 shadow-black">
-            <div class="d-flex align-items-center mb-3">
-              <img class="me-3" src="~@/assets/img/user6.png" alt="user6" />
-              <div class="d-flex flex-column mt-2">
-                <a href="#" class="mb-0 fw-bold">阿爾敏</a>
-                <small class="text-muted">2022/1/10 12:00</small>
-              </div>
-            </div>
-            <p>各位我有一個作戰計畫</p>
-          </li>
+        <SearchBar @search="getUserPosts"></SearchBar>
+        <ul class="ps-0" v-if="posts?.length">
+          <PostCard :post="post" v-for="post in posts"
+            :key="post.name + post._id" @update="getUserPosts">
+          </PostCard>
         </ul>
+        <template v-else>
+          <NoPostsCard :message="'此使用者目前尚無動態!'"></NoPostsCard>
+        </template>
       </div>
       <Sidebar></Sidebar>
     </div>
@@ -96,15 +67,159 @@
 <script>
 import Sidebar from '../components/Sidebar.vue'
 import SidebarSm from '../components/SidebarSm.vue'
+import PostCard from '../components/PostCard/Index.vue'
+import SearchBar from '../components/SearchBar.vue'
+import NoPostsCard from '../components/NoPostsCard.vue'
+import { mapState } from 'vuex'
 
 export default {
   name: 'personal',
   components: {
     Sidebar,
-    SidebarSm
+    SidebarSm,
+    NoPostsCard,
+    PostCard,
+    SearchBar
+  },
+  props: {
+    id: {
+      type: [String, Number],
+      require: true
+    }
+  },
+  data () {
+    return {
+      userInfo: {},
+      personal: {},
+      posts: '',
+      search: {}
+    }
+  },
+  async created () {
+    // 動態路由無法正確取得生命週期，使用watch監聽
+    this.$watch(
+      () => this.id,
+      async (toParams, previousParams) => {
+        this.userInfo = await this.checkPersonal(toParams)
+        if (this.userInfo) {
+          await this.getUserPosts()
+        }
+      }
+    )
+    await this.checkPersonal(this.id)
+    await this.getUserPosts()
+  },
+  computed: {
+    ...mapState({
+      token: state => state.token,
+      info: state => state.info
+    }),
+    isSelf () {
+      return this.id === this.info._id
+    }
+  },
+  methods: {
+    async checkPersonal (id) {
+      this.$store.dispatch('updateLoading', true)
+      const config = {
+        method: 'GET',
+        url: `${process.env.VUE_APP_APIPATH}/api/v1/user/profile/${id}`,
+        headers: {
+          authorization: `Bearer ${this.token}`
+        }
+      }
+      return await this.$http(config).then(res => {
+        this.$store.dispatch('updateLoading', false)
+        console.log(res.data.message)
+        this.personal = res.data.message
+        return true
+      }).catch(() => {
+        this.$store.dispatch('updateLoading', false)
+        this.$router.push({ name: '個人貼文牆頁', params: { id: this.info._id } })
+        return false
+      })
+    },
+    getUserPosts (search = this.search) {
+      return new Promise((resolve, reject) => {
+        this.search = search
+        this.$store.dispatch('updateLoading', true)
+        const config = {
+          method: 'GET',
+          url: `${process.env.VUE_APP_APIPATH}/api/v1/post/user/${this.id}`,
+          headers: {
+            authorization: `Bearer ${this.token}`
+          }
+        }
+        this.$http(config)
+          .then((res) => {
+            this.posts = res.data.message
+            console.log(res.data.message)
+            resolve(res.data.message)
+            this.$store.dispatch('updateLoading', false)
+          })
+          .catch((error) => {
+            reject(error.response.data.message)
+            this.$store.dispatch('updateLoading', false)
+          })
+      })
+    },
+    addFollow () {
+      return new Promise((resolve, reject) => {
+        this.$store.dispatch('updateLoading', true)
+        const config = {
+          method: 'POST',
+          url: `${process.env.VUE_APP_APIPATH}/api/v1/user/${this.id}/follow`,
+          headers: {
+            authorization: `Bearer ${this.token}`
+          }
+        }
+        this.$http(config)
+          .then(async (res) => {
+            resolve(res.data.message)
+            await this.checkPersonal(this.id)
+            await this.getUserPosts()
+            this.$store.dispatch('updateLoading', false)
+          })
+          .catch(async (error) => {
+            reject(error.response.data.message)
+            await this.checkPersonal(this.id)
+            await this.getUserPosts()
+            this.$store.dispatch('updateLoading', false)
+          })
+      })
+    },
+    removeFollow () {
+      return new Promise((resolve, reject) => {
+        this.$store.dispatch('updateLoading', true)
+        const config = {
+          method: 'DELETE',
+          url: `${process.env.VUE_APP_APIPATH}/api/v1/user/${this.id}/follow`,
+          headers: {
+            authorization: `Bearer ${this.token}`
+          }
+        }
+        this.$http(config)
+          .then(async (res) => {
+            resolve(res.data.message)
+            await this.checkPersonal(this.id)
+            await this.getUserPosts()
+            this.$store.dispatch('updateLoading', false)
+          })
+          .catch(async (error) => {
+            reject(error.response.data.message)
+            await this.checkPersonal(this.id)
+            await this.getUserPosts()
+            this.$store.dispatch('updateLoading', false)
+          })
+      })
+    }
   }
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+.image {
+  width: 80px;
+  height: 80px;
+}
 </style>

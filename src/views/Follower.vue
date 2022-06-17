@@ -1,5 +1,5 @@
 <template>
-  <section class="container mt-7 px-lg-12">
+  <section class="container mt-7 mb-7 mb-md-0 px-lg-12">
     <div class="row">
       <div class="col-md-7">
         <div class="card mb-5 rounded-0 border-2 position-relative">
@@ -9,80 +9,37 @@
             style="z-index: -1; top: 10px; left: -6px"
           ></div>
         </div>
-        <ul class="ps-0">
-          <li class="card h-100 py-3 px-4 mb-3 border-2 shadow-black">
+        <ul class="ps-0" v-if="followers?.length">
+          <li class="card h-100 py-3 px-4 mb-3 border-2 shadow-black"
+          v-for="(item, key) in followers" :key="item + key">
             <div class="d-flex justify-content-between align-items-end">
               <div class="d-flex align-items-center">
                 <img
-                  class="me-3 img-fluid"
-                  src="~@/assets/img/user2.png"
+                  class="img me-3 img-fluid"
+                  src="~@/assets/img/user.png"
                   alt="user2"
+                  v-if="!item.user.photo"
                 />
-                <div class="d-flex flex-column mt-2">
-                  <a href="#" class="mb-0 fw-bold">愛爾敏</a>
-                  <small class="text-muted">追蹤時間：2022/2/14 12:00</small>
-                </div>
-              </div>
-              <div>
-                <p class="mb-0 fs-8">您已追蹤 90 天！</p>
-              </div>
-            </div>
-          </li>
-          <li class="card h-100 py-3 px-4 mb-3 border-2 shadow-black">
-            <div class="d-flex justify-content-between align-items-end">
-              <div class="d-flex align-items-center">
                 <img
-                  class="me-3 img-fluid"
-                  src="~@/assets/img/user6.png"
-                  alt="user6"
+                  class="img me-3 img-fluid"
+                  :src="item.user.photo"
+                  alt="user2"
+                  v-else
                 />
                 <div class="d-flex flex-column mt-2">
-                  <a href="#" class="mb-0 fw-bold">李維</a>
-                  <small class="text-muted">追蹤時間：2022/2/14 12:00</small>
+                  <a href="#" class="mb-0 fw-bold">{{ item.user.name }}</a>
+                  <small class="text-muted">追蹤時間：{{ getDate(item.createdAt) }}</small>
                 </div>
               </div>
               <div>
-                <p class="mb-0 fs-8">您已追蹤 90 天！</p>
-              </div>
-            </div>
-          </li>
-          <li class="card h-100 py-3 px-4 mb-3 border-2 shadow-black">
-            <div class="d-flex justify-content-between align-items-end">
-              <div class="d-flex align-items-center">
-                <img
-                  class="me-3 img-fluid"
-                  src="~@/assets/img/user5.png"
-                  alt="user5"
-                />
-                <div class="d-flex flex-column mt-2">
-                  <a href="#" class="mb-0 fw-bold">米歇爾</a>
-                  <small class="text-muted">追蹤時間：2022/2/14 12:00</small>
-                </div>
-              </div>
-              <div>
-                <p class="mb-0 fs-8">您已追蹤 90 天！</p>
-              </div>
-            </div>
-          </li>
-          <li class="card h-100 py-3 px-4 mb-3 border-2 shadow-black">
-            <div class="d-flex justify-content-between align-items-end">
-              <div class="d-flex align-items-center">
-                <img
-                  class="me-3 img-fluid"
-                  src="~@/assets/img/user4.png"
-                  alt="user4"
-                />
-                <div class="d-flex flex-column mt-2">
-                  <a href="#" class="mb-0 fw-bold">米卡莎</a>
-                  <small class="text-muted">追蹤時間：2022/2/14 12:00</small>
-                </div>
-              </div>
-              <div>
-                <p class="mb-0 fs-8">您已追蹤 90 天！</p>
+                <p class="mb-0 fs-8">您已追蹤 {{ getDuringDays(item.createdAt) }} 天！</p>
               </div>
             </div>
           </li>
         </ul>
+        <template v-else>
+          <NoPostsCard :message="'目前尚無追蹤用戶！'"></NoPostsCard>
+        </template>
       </div>
       <Sidebar></Sidebar>
     </div>
@@ -104,15 +61,70 @@
 <script>
 import Sidebar from '../components/Sidebar.vue'
 import SidebarSm from '../components/SidebarSm.vue'
+import NoPostsCard from '../components/NoPostsCard.vue'
+import { mapState } from 'vuex'
 
 export default {
   name: 'follower',
   components: {
     Sidebar,
-    SidebarSm
+    SidebarSm,
+    NoPostsCard
+  },
+  data () {
+    return {
+      followers: []
+    }
+  },
+  created () {
+    this.getFollowing()
+  },
+  computed: {
+    ...mapState({
+      token: state => state.token,
+      info: state => state.info
+    })
+  },
+  methods: {
+    getFollowing () {
+      return new Promise((resolve, reject) => {
+        this.$store.dispatch('updateLoading', true)
+        const config = {
+          method: 'GET',
+          url: `${process.env.VUE_APP_APIPATH}/api/v1/user/following`,
+          headers: {
+            authorization: `Bearer ${this.token}`
+          }
+        }
+        this.$http(config)
+          .then((res) => {
+            this.followers = res.data.message.following
+            resolve(res.data.message.following)
+            console.log(res.data.message.following)
+            this.$store.dispatch('updateLoading', false)
+          })
+          .catch((error) => {
+            reject(error.response.data.message)
+            this.$store.dispatch('updateLoading', false)
+          })
+      })
+    },
+    getDate (createdAt) {
+      const date = new Date(createdAt).toLocaleDateString()
+      const time = new Date(createdAt).toTimeString().split(' ')[0]
+      return `${date} ${time}`
+    },
+    getDuringDays (createdAt) {
+      const during = new Date().getTime() - new Date(createdAt).getTime()
+      return parseInt(Math.abs(during) / 1000 / 60 / 60 / 24)
+    }
   }
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
+.img {
+  height: 50px;
+  width: 50px;
+}
 </style>

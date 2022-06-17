@@ -1,5 +1,5 @@
 <template>
-  <section class="container mt-7 px-lg-12">
+  <section class="container mt-7 mb-7 mb-md-0 px-lg-12">
     <div class="row">
       <div class="col-md-7">
         <div class="card mb-5 rounded-0 border-2 position-relative">

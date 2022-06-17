@@ -16,13 +16,20 @@
           <img
             :src="info.photo"
             alt="user1"
-            class="me-2 img-fluid"
+            class="img img-fluid rounded-circle"
             v-if="info.photo"
+          />
+          <img
+            class="img img-fluid rounded-circle"
+            src="~@/assets/img/user.png"
+            alt="user2"
+            v-else
           />
           <div class="dropdown bg-white me-2">
             <button
               class="
                 btn btn-white
+                shadow-none
                 border-0
                 text-decoration-underline
                 fw-bolder
@@ -46,7 +53,7 @@
               aria-labelledby="dropdownMenuButton1"
             >
               <li class="border-bottom border-dark border-2">
-                <router-link to="/personal" class="dropdown-item"
+                <router-link :to="{ name: '個人貼文牆頁', params: { id: info._id } }" class="dropdown-item"
                   >我的貼文牆</router-link
                 >
               </li>
@@ -87,15 +94,18 @@ export default {
     ...mapMutations(['setInfo', 'setToken']),
     logout () {
       this.setToken()
-      this.setInfo()
       this.$router.push({ name: '登入頁面' })
     }
   }
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .menu-shadow {
   box-shadow: 5px 5px 0 -2px #fff, 5px 5px 0 0 #000400;
+}
+.img {
+  height: 50px;
+  width: 50px;
 }
 </style>
