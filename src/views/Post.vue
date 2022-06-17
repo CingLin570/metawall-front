@@ -1,6 +1,5 @@
 <template>
-  <Loading :active="isLoading"></Loading>
-  <section class="container mt-7 px-lg-12">
+  <section class="container mt-7 mb-7 mb-md-0 px-lg-12">
     <div class="row">
       <div class="col-md-7">
         <div class="card mb-5 rounded-0 border-2 position-relative">
@@ -86,7 +85,6 @@ export default {
         content: '',
         image: ''
       },
-      isLoading: false,
       imagePreview: '',
       errorMessage: ''
     }
@@ -113,7 +111,7 @@ export default {
 
         const config = {
           method: 'POST',
-          url: `${process.env.VUE_APP_APIPATH}/file`,
+          url: `${process.env.VUE_APP_APIPATH}/api/v1/file`,
           headers: {
             authorization: `Bearer ${this.token}`
           },
@@ -136,7 +134,7 @@ export default {
       return new Promise((resolve, reject) => {
         const config = {
           method: 'POST',
-          url: `${process.env.VUE_APP_APIPATH}/post`,
+          url: `${process.env.VUE_APP_APIPATH}/api/v1/post`,
           headers: {
             authorization: `Bearer ${this.token}`
           },
@@ -155,19 +153,20 @@ export default {
     },
     async submitPost () {
       try {
-        this.isLoading = true
+        this.$store.dispatch('updateLoading', true)
         if (this.imagePreview) {
           // 先傳圖片
           await this.uploadFile()
         }
         const response = await this.uploadPost()
         await ws.send(JSON.stringify(response))
-        this.isLoading = false
+        this.$store.dispatch('updateLoading', false)
       } catch (error) {
         if (!this.errorMessage) {
           this.errorMessage = error
         }
-        this.isLoading = false
+        this.$store.dispatch('updateLoading', false)
+        this.$router.push({ name: '首頁' })
       }
     }
   }
