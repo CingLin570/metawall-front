@@ -54,6 +54,12 @@ const routes = [
     ]
   },
   {
+    path: '/oauth',
+    name: '第三方登入導頁',
+    meta: { requiresAuth: false },
+    component: () => import('@/views/Oauth.vue')
+  },
+  {
     path: '/login',
     name: '登入頁面',
     meta: { requiresAuth: false },
