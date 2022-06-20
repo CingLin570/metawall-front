@@ -49,10 +49,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// .SidebarSm {
-//   .btn {
-//     width: 3rem;
-//     height: 3rem;
-//   }
-// }
+
 </style>

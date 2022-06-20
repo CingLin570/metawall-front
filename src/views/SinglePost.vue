@@ -82,7 +82,6 @@ export default {
         this.$http(config)
           .then((res) => {
             this.post = res.data.message
-            console.log(res.data.message)
             resolve(res.data.message)
             this.$store.dispatch('updateLoading', false)
           })

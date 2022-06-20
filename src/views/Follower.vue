@@ -100,7 +100,6 @@ export default {
           .then((res) => {
             this.followers = res.data.message.following
             resolve(res.data.message.following)
-            console.log(res.data.message.following)
             this.$store.dispatch('updateLoading', false)
           })
           .catch((error) => {

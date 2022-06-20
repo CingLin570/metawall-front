@@ -101,7 +101,6 @@ export default {
           .then((res) => {
             this.likeList = res.data.message
             resolve(res.data.message)
-            console.log(res.data.message)
             this.$store.dispatch('updateLoading', false)
           })
           .catch((error) => {

@@ -44,7 +44,7 @@
               role="tabpanel"
               aria-labelledby="name-edit"
             >
-              <!-- tab-content -->
+              <!-- 切換元件內容 -->
               <keep-alive>
                 <component :is="currentTabComponent"></component>
               </keep-alive>

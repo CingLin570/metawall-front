@@ -130,7 +130,6 @@ export default {
       }
       return await this.$http(config).then(res => {
         this.$store.dispatch('updateLoading', false)
-        console.log(res.data.message)
         this.personal = res.data.message
         return true
       }).catch(() => {
@@ -153,7 +152,6 @@ export default {
         this.$http(config)
           .then((res) => {
             this.posts = res.data.message
-            console.log(res.data.message)
             resolve(res.data.message)
             this.$store.dispatch('updateLoading', false)
           })

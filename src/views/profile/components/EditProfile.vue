@@ -146,6 +146,7 @@ export default {
         const input = this.$refs['upload-file']
         const data = new FormData()
         data.append('image', input.files[0])
+        // 加入api判別類別，判別一比一尺寸
         data.append('type', this.type)
         // 清空 input，避免重複選同一檔案無法觸發 change 事件
         input.files = new DataTransfer().files
@@ -162,7 +163,7 @@ export default {
           .then((res) => {
             this.user.photo = res.data.message.link
             this.photoPreview = ''
-            resolve(res.data.staus)
+            resolve(res.data.status)
           })
           .catch((error) => {
             this.errorMessage = error.response.data.message
