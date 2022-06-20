@@ -114,7 +114,7 @@ export default {
       this.$http(config).then(response => {
         this.$store.dispatch('updateLoading', false)
         Object.assign(this.$data, this.$options.data())
-        // this.$emit('current-page', 'Login')
+        this.$emit('current-page', 'Login')
       }).catch(error => {
         this.$store.dispatch('updateLoading', false)
         if (error.response) {
