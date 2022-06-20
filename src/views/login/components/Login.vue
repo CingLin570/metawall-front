@@ -51,6 +51,11 @@
       :rules="validatePassword">
     </Field>
     <error-message name="password" class="invalid-feedback"></error-message>
+    <div class="d-flex">
+      <router-link :to="{ name: '忘記密碼頁' }" class="ms-auto">
+        忘記密碼?
+      </router-link>
+    </div>
   </div>
   <p v-if="errorMessage" class="text-danger text-center fs-7 mb-2 d-block">
     {{ errorMessage }}
@@ -80,10 +85,14 @@ export default {
       errorMessage: ''
     }
   },
+  emits: ['current-page'],
   computed: {
     formIsFinished () {
       return this.user.email && this.user.password
     }
+  },
+  created () {
+    this.errorMessage = this.$route.params.error
   },
   methods: {
     ...mapMutations(['setInfo', 'setToken']),
@@ -127,13 +136,11 @@ export default {
       this.$store.dispatch('updateLoading', true)
       window.location.replace(`${process.env.VUE_APP_APIPATH}/auth/google`)
       this.$store.dispatch('updateLoading', false)
-      console.log(this.route)
     },
     signInByFacebook () {
       this.$store.dispatch('updateLoading', true)
       window.location.replace(`${process.env.VUE_APP_APIPATH}/auth/facebook`)
       this.$store.dispatch('updateLoading', false)
-      console.log(this.route)
     }
   }
 }
