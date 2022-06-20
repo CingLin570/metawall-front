@@ -12,7 +12,7 @@
           <h1 class="mb-3 text-center text-primary metawall-logo">MetaWall</h1>
           <p class="h4 mb-3 text-center" v-if="currentPage === 'Login'">到元宇宙展開全新社交圈</p>
           <p class="h4 mb-3 text-center" v-else>註冊</p>
-            <!-- tab-content -->
+            <!-- 切換元件內容 -->
             <div>
               <keep-alive>
                 <component :is="currentTabComponent" @current-page="changePage"></component>
