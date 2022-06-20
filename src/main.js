@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 // 匯入 vee-validate 主套件
 import { Field, Form, ErrorMessage, defineRule, configure } from 'vee-validate'
 // 匯入 vee-validate 相關規則
-import { required, email, min, confirmed, mimes, regex } from '@vee-validate/rules'
+import { required, email, min, confirmed, mimes, regex, numeric } from '@vee-validate/rules'
 // 匯入多國語系的功能
 import { localize } from '@vee-validate/i18n'
 // 匯入繁體中文語系檔案
@@ -23,6 +23,7 @@ defineRule('min', min)
 defineRule('confirmed', confirmed)
 defineRule('mimes', mimes)
 defineRule('regex', regex)
+defineRule('numeric', numeric)
 // 設定 vee-validate 全域規則
 configure({
   generateMessage: localize('en', {
@@ -38,6 +39,11 @@ configure({
       name: {
         required: '暱稱為必填',
         min: '暱稱欄位必須至少兩個字元'
+      },
+      verification: {
+        required: '驗證碼為必填',
+        min: '驗證碼欄位必須為四個數字',
+        numeric: '驗證碼必須為數字'
       }
     }
   }), // 載入繁體中文語系
