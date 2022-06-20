@@ -65,6 +65,12 @@ const routes = [
     meta: { requiresAuth: false },
     component: () => import('@/views/login/Index.vue')
   },
+  {
+    path: '/forgetPassword',
+    name: '忘記密碼頁',
+    meta: { requiresAuth: false },
+    component: () => import('@/views/ForgetPassword.vue')
+  },
   // 重新導向
   {
     path: '/:pathMatch(.*)*',
