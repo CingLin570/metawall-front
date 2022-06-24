@@ -49,6 +49,7 @@
                 border border-dark border-2
                 rounded-0
                 menu-shadow
+                text-center
               "
               aria-labelledby="dropdownMenuButton1"
             >
