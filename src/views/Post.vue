@@ -161,12 +161,12 @@ export default {
         const response = await this.uploadPost()
         await ws.send(JSON.stringify(response))
         this.$store.dispatch('updateLoading', false)
+        this.$router.push({ name: '首頁' })
       } catch (error) {
         if (!this.errorMessage) {
           this.errorMessage = error
         }
         this.$store.dispatch('updateLoading', false)
-        this.$router.push({ name: '首頁' })
       }
     }
   }

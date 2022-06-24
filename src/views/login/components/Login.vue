@@ -146,7 +146,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scope>
+<style lang="scss" scoped>
 .img {
   width: 24px;
   height: 24px;
