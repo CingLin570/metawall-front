@@ -11,7 +11,36 @@
         <div class="col-md-6">
           <h1 class="mb-3 text-center text-primary metawall-logo">MetaWall</h1>
           <p class="h4 mb-3 text-center">忘記密碼</p>
-            <Form v-slot="{ errors }" class="needs-validation">
+            <Form v-slot="{ errors }" class="needs-validation" v-if="!sendEmail"
+            @submit="forgetPassword">
+                <div class="form-group mb-3">
+                  <Field
+                    type="email"
+                    class="form-control font-azeret"
+                    :class="{ 'is-invalid': errors['email'] }"
+                    id="userEmail"
+                    name="email"
+                    placeholder="Email"
+                    required
+                    v-model="info.email"
+                    rules="email|required"
+                    :disabled="sendEmail">
+                  </Field>
+                  <error-message name="email" class="invalid-feedback"></error-message>
+                </div>
+                <p v-if="errorMessage" class="text-danger text-center fs-7 mb-2 d-block">
+                  {{ errorMessage }}
+                </p>
+                <div class="d-grid gap-2 mb-2">
+                  <button
+                    type="submit"
+                    class="btn btn-primary shadow-black rounded-3">
+                    送出
+                  </button>
+                </div>
+            </Form>
+            <Form v-slot="{ errors }" class="needs-validation" v-else
+            @submit="verification">
                 <div class="form-group mb-3">
                   <Field
                     type="email"
@@ -47,14 +76,7 @@
                 <div class="d-grid gap-2 mb-2">
                   <button
                     type="submit"
-                    class="btn btn-primary shadow-black rounded-3"
-                    @click.prevent="forgetPassword" v-if="!sendEmail">
-                    送出
-                  </button>
-                  <button
-                    type="submit"
-                    class="btn btn-primary shadow-black rounded-3"
-                    @click.prevent="verification" v-else>
+                    class="btn btn-primary shadow-black rounded-3">
                     送出
                   </button>
                 </div>
