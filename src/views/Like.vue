@@ -15,13 +15,13 @@
             <div class="d-flex justify-content-between align-items-center">
               <div class="d-flex align-items-center">
                 <img
-                  class="img me-3 img-fluid"
+                  class="img me-3 img-fluid rounded-circle"
                   src="~@/assets/img/user.png"
                   alt="user2"
                   v-if="!item.user.photo"
                 />
                 <img
-                  class="img me-3 img-fluid"
+                  class="img me-3 img-fluid rounded-circle"
                   :src="item.user.photo"
                   alt="user2"
                   v-else
