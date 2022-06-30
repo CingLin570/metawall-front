@@ -71,7 +71,7 @@ import { mapState } from 'vuex'
 import Sidebar from '../components/Sidebar.vue'
 import SidebarSm from '../components/SidebarSm.vue'
 
-const ws = new WebSocket('wss://secure-plains-31314.herokuapp.com/websockets')
+const ws = new WebSocket('wss://still-fortress-89062.herokuapp.com/websockets')
 
 export default {
   name: 'post',
@@ -153,20 +153,20 @@ export default {
     },
     async submitPost () {
       try {
-        this.$store.dispatch('updateLoading', true)
+        this.$store.commit('updateLoading', true)
         if (this.imagePreview) {
           // 先傳圖片
           await this.uploadFile()
         }
         const response = await this.uploadPost()
         await ws.send(JSON.stringify(response))
-        this.$store.dispatch('updateLoading', false)
+        this.$store.commit('updateLoading', false)
         this.$router.push({ name: '首頁' })
       } catch (error) {
         if (!this.errorMessage) {
           this.errorMessage = error
         }
-        this.$store.dispatch('updateLoading', false)
+        this.$store.commit('updateLoading', false)
       }
     }
   }

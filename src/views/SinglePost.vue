@@ -71,7 +71,7 @@ export default {
   methods: {
     getSinglePost (id) {
       return new Promise((resolve, reject) => {
-        this.$store.dispatch('updateLoading', true)
+        this.$store.commit('updateLoading', true)
         const config = {
           method: 'GET',
           url: `${process.env.VUE_APP_APIPATH}/api/v1/post/${id}`,
@@ -83,12 +83,12 @@ export default {
           .then((res) => {
             this.post = res.data.message
             resolve(res.data.message)
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
           })
           .catch((error) => {
             reject(error.response.data.message)
             this.$router.push({ name: '首頁' })
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
           })
       })
     }

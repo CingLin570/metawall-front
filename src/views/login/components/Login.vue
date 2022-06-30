@@ -109,14 +109,14 @@ export default {
       return true
     },
     signIn () {
-      this.$store.dispatch('updateLoading', true)
+      this.$store.commit('updateLoading', true)
       const config = {
         method: 'POST',
         url: `${process.env.VUE_APP_APIPATH}/api/v1/user/login`,
         data: this.user
       }
       this.$http(config).then((response) => {
-        this.$store.dispatch('updateLoading', false)
+        this.$store.commit('updateLoading', false)
         const data = response.data.user
         this.setToken(data.token)
         this.setInfo({
@@ -126,21 +126,21 @@ export default {
         })
         this.$router.push({ name: '首頁' })
       }).catch(error => {
-        this.$store.dispatch('updateLoading', false)
+        this.$store.commit('updateLoading', false)
         if (error.response) {
           this.errorMessage = error.response.data.message
         }
       })
     },
     signInByGoogle () {
-      this.$store.dispatch('updateLoading', true)
+      this.$store.commit('updateLoading', true)
       window.location.replace(`${process.env.VUE_APP_APIPATH}/auth/google`)
-      this.$store.dispatch('updateLoading', false)
+      this.$store.commit('updateLoading', false)
     },
     signInByFacebook () {
-      this.$store.dispatch('updateLoading', true)
+      this.$store.commit('updateLoading', true)
       window.location.replace(`${process.env.VUE_APP_APIPATH}/auth/facebook`)
-      this.$store.dispatch('updateLoading', false)
+      this.$store.commit('updateLoading', false)
     }
   }
 }

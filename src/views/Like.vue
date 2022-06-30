@@ -89,7 +89,7 @@ export default {
   methods: {
     getLikeList () {
       return new Promise((resolve, reject) => {
-        this.$store.dispatch('updateLoading', true)
+        this.$store.commit('updateLoading', true)
         const config = {
           method: 'GET',
           url: `${process.env.VUE_APP_APIPATH}/api/v1/user/getLikeList`,
@@ -101,17 +101,17 @@ export default {
           .then((res) => {
             this.likeList = res.data.message
             resolve(res.data.message)
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
           })
           .catch((error) => {
             reject(error.response.data.message)
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
           })
       })
     },
     removeLike (id) {
       return new Promise((resolve, reject) => {
-        this.$store.dispatch('updateLoading', true)
+        this.$store.commit('updateLoading', true)
         const config = {
           method: 'DELETE',
           url: `${process.env.VUE_APP_APIPATH}/api/v1/post/${id}/likes`,
@@ -121,12 +121,12 @@ export default {
         }
         this.$http(config)
           .then((res) => {
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
             resolve(res.data.message)
             this.getLikeList()
           })
           .catch((error) => {
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
             reject(error.response.data.message)
             this.getLikeList()
           })

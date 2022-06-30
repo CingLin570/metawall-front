@@ -105,18 +105,18 @@ export default {
       return true
     },
     submitSignup () {
-      this.$store.dispatch('updateLoading', true)
+      this.$store.commit('updateLoading', true)
       const config = {
         method: 'POST',
         url: `${process.env.VUE_APP_APIPATH}/api/v1/user/register`,
         data: this.user
       }
       this.$http(config).then(response => {
-        this.$store.dispatch('updateLoading', false)
+        this.$store.commit('updateLoading', false)
         Object.assign(this.$data, this.$options.data())
         this.$emit('current-page', 'Login')
       }).catch(error => {
-        this.$store.dispatch('updateLoading', false)
+        this.$store.commit('updateLoading', false)
         if (error.response) {
           this.errorMessage = error.response.data.message
         }

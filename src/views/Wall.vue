@@ -26,7 +26,7 @@ import NoPostsCard from '../components/NoPostsCard.vue'
 import SearchBar from '../components/SearchBar.vue'
 import PostCard from '../components/PostCard/Index.vue'
 import { mapState } from 'vuex'
-const ws = new WebSocket('wss://secure-plains-31314.herokuapp.com/websockets')
+const ws = new WebSocket('wss://still-fortress-89062.herokuapp.com/websockets')
 
 export default {
   name: 'wall',
@@ -53,7 +53,7 @@ export default {
     getPosts (search = this.search) {
       return new Promise((resolve, reject) => {
         this.search = search
-        this.$store.dispatch('updateLoading', true)
+        this.$store.commit('updateLoading', true)
         const config = {
           method: 'GET',
           url: `${process.env.VUE_APP_APIPATH}/api/v1/posts`,
@@ -66,11 +66,11 @@ export default {
           .then((res) => {
             this.posts = res.data.message
             resolve(res.data.message)
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
           })
           .catch((error) => {
             reject(error.response.data.message)
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
           })
       })
     }

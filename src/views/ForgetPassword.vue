@@ -106,7 +106,7 @@ export default {
     ...mapMutations(['setInfo', 'setToken']),
     forgetPassword () {
       return new Promise((resolve, reject) => {
-        this.$store.dispatch('updateLoading', true)
+        this.$store.commit('updateLoading', true)
         const data = {
           email: this.info.email
         }
@@ -116,10 +116,10 @@ export default {
           data
         }
         this.$http(config).then((response) => {
-          this.$store.dispatch('updateLoading', false)
+          this.$store.commit('updateLoading', false)
           this.sendEmail = true
         }).catch((error) => {
-          this.$store.dispatch('updateLoading', false)
+          this.$store.commit('updateLoading', false)
           reject(error.response.data.message)
           this.errorMessage = error.response.data.message
         })
@@ -127,14 +127,14 @@ export default {
     },
     verification () {
       return new Promise((resolve, reject) => {
-        this.$store.dispatch('updateLoading', true)
+        this.$store.commit('updateLoading', true)
         const config = {
           method: 'POST',
           url: `${process.env.VUE_APP_APIPATH}/api/v1/verification`,
           data: this.info
         }
         this.$http(config).then((response) => {
-          this.$store.dispatch('updateLoading', false)
+          this.$store.commit('updateLoading', false)
           const data = response.data.user
           this.setToken(data.token)
           this.setInfo({
@@ -144,7 +144,7 @@ export default {
           })
           this.$router.push({ name: '首頁' })
         }).catch((error) => {
-          this.$store.dispatch('updateLoading', false)
+          this.$store.commit('updateLoading', false)
           reject(error.response.data.message)
           this.errorMessage = error.response.data.message
         })

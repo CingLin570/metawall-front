@@ -35,7 +35,7 @@ export default createStore({
   },
   // 唯一可以同步修改state的地方
   mutations: {
-    loading (state, status) {
+    updateLoading (state, status) {
       state.isLoading = status
     },
     setInfo (state, response) { // 取得會員資訊
@@ -51,9 +51,6 @@ export default createStore({
   },
   // 非同步事件只能寫在 actions(不能直接改變 state)
   actions: {
-    updateLoading (context, status) {
-      context.commit('loading', status)
-    }
   },
   // 類似於使用computed，過濾 state
   getters: {

@@ -32,7 +32,6 @@
                   <router-link :to="{ name: '個人貼文牆頁', params: { id: item.user._id } }">
                     {{ item.user.name }}
                   </router-link>
-                  <!-- <a href="#" class="mb-0 fw-bold">{{ item.user.name }}</a> -->
                   <small class="text-muted">追蹤時間：{{ getDate(item.createdAt) }}</small>
                 </div>
               </div>
@@ -93,7 +92,7 @@ export default {
   methods: {
     getFollowing () {
       return new Promise((resolve, reject) => {
-        this.$store.dispatch('updateLoading', true)
+        this.$store.commit('updateLoading', true)
         const config = {
           method: 'GET',
           url: `${process.env.VUE_APP_APIPATH}/api/v1/user/following`,
@@ -105,11 +104,11 @@ export default {
           .then((res) => {
             this.followers = res.data.message.following
             resolve(res.data.message.following)
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
           })
           .catch((error) => {
             reject(error.response.data.message)
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
           })
       })
     },

@@ -110,7 +110,7 @@ export default {
     ...mapMutations(['setInfo']),
     getProfile () {
       return new Promise((resolve, reject) => {
-        this.$store.dispatch('updateLoading', true)
+        this.$store.commit('updateLoading', true)
         const config = {
           method: 'GET',
           url: `${process.env.VUE_APP_APIPATH}/api/v1/user/profile`,
@@ -120,12 +120,12 @@ export default {
         }
         this.$http(config)
           .then((response) => {
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
             this.setProfile(response.data.message)
             resolve(response.data.message)
           })
           .catch((error) => {
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
             reject(error.response.data.message)
           })
       })
@@ -193,7 +193,7 @@ export default {
     },
     async submit () {
       try {
-        this.$store.dispatch('updateLoading', true)
+        this.$store.commit('updateLoading', true)
         if (this.isUpdatePhoto) {
           await this.uploadFile() // 先上傳圖片
         }
@@ -205,12 +205,12 @@ export default {
           _id: response._id
         })
         this.errorMessage = ''
-        this.$store.dispatch('updateLoading', false)
+        this.$store.commit('updateLoading', false)
       } catch (error) {
         if (!this.errorMessage) {
           this.errorMessage = error
         }
-        this.$store.dispatch('updateLoading', false)
+        this.$store.commit('updateLoading', false)
         this.getProfile()
       }
     }

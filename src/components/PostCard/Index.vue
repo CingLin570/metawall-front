@@ -194,7 +194,7 @@ export default {
     },
     addLike () {
       return new Promise((resolve, reject) => {
-        this.$store.dispatch('updateLoading', true)
+        this.$store.commit('updateLoading', true)
         const config = {
           method: 'POST',
           url: `${process.env.VUE_APP_APIPATH}/api/v1/post/${this.post._id}/likes`,
@@ -204,12 +204,12 @@ export default {
         }
         this.$http(config)
           .then((res) => {
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
             resolve(res.data.message)
             this.$emit('update')
           })
           .catch((error) => {
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
             reject(error.response.data.message)
             this.$emit('update')
           })
@@ -217,7 +217,7 @@ export default {
     },
     removeLike () {
       return new Promise((resolve, reject) => {
-        this.$store.dispatch('updateLoading', true)
+        this.$store.commit('updateLoading', true)
         const config = {
           method: 'DELETE',
           url: `${process.env.VUE_APP_APIPATH}/api/v1/post/${this.post._id}/likes`,
@@ -227,12 +227,12 @@ export default {
         }
         this.$http(config)
           .then((res) => {
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
             resolve(res.data.message)
             this.$emit('update')
           })
           .catch((error) => {
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
             reject(error.response.data.message)
             this.$emit('update')
           })
@@ -240,7 +240,7 @@ export default {
     },
     sendComment () {
       return new Promise((resolve, reject) => {
-        this.$store.dispatch('updateLoading', true)
+        this.$store.commit('updateLoading', true)
         if (!this.content) {
           return false
         }
@@ -256,13 +256,13 @@ export default {
         }
         this.$http(config)
           .then((res) => {
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
             this.content = ''
             resolve(res.data.message)
             this.$emit('update')
           })
           .catch((error) => {
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
             reject(error.response.data.message)
             this.content = ''
             this.$emit('update')

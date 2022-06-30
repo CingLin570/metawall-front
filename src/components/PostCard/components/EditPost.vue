@@ -149,13 +149,13 @@ export default {
     },
     async submitPost () {
       try {
-        this.$store.dispatch('updateLoading', true)
+        this.$store.commit('updateLoading', true)
         if (this.imagePreview) {
           // 先傳圖片
           await this.uploadFile()
         }
         await this.updatePost()
-        this.$store.dispatch('updateLoading', false)
+        this.$store.commit('updateLoading', false)
         this.$emit('edit-post')
         this.editModal.hide()
       } catch (error) {

@@ -86,7 +86,7 @@ export default {
       return true
     },
     submit () {
-      this.$store.dispatch('updateLoading', true)
+      this.$store.commit('updateLoading', true)
       const config = {
         method: 'PATCH',
         url: `${process.env.VUE_APP_APIPATH}/api/v1/user/updatePassword`,
@@ -97,12 +97,12 @@ export default {
       }
       this.$http(config)
         .then((res) => {
-          this.$store.dispatch('updateLoading', false)
+          this.$store.commit('updateLoading', false)
           this.setToken(res.data.user.token)
           Object.assign(this.$data, this.$options.data())
         })
         .catch((error) => {
-          this.$store.dispatch('updateLoading', false)
+          this.$store.commit('updateLoading', false)
           this.errorMessage = error.response.data.message
         })
     }

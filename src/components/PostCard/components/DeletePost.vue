@@ -43,7 +43,7 @@ export default {
   methods: {
     deletePost () {
       return new Promise((resolve, reject) => {
-        this.$store.dispatch('updateLoading', true)
+        this.$store.commit('updateLoading', true)
         const config = {
           method: 'DELETE',
           url: `${process.env.VUE_APP_APIPATH}/api/v1/post/${this.deleteId}`,
@@ -53,13 +53,13 @@ export default {
         }
         this.$http(config)
           .then((res) => {
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
             this.deleteModal.hide()
             resolve(res.data.message)
             this.$emit('delete')
           })
           .catch((error) => {
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
             this.deleteModal.hide()
             reject(error.response.data.message)
           })

@@ -120,7 +120,7 @@ export default {
   },
   methods: {
     async checkPersonal (id) {
-      this.$store.dispatch('updateLoading', true)
+      this.$store.commit('updateLoading', true)
       const config = {
         method: 'GET',
         url: `${process.env.VUE_APP_APIPATH}/api/v1/user/profile/${id}`,
@@ -129,11 +129,11 @@ export default {
         }
       }
       return await this.$http(config).then(res => {
-        this.$store.dispatch('updateLoading', false)
+        this.$store.commit('updateLoading', false)
         this.personal = res.data.message
         return true
       }).catch(() => {
-        this.$store.dispatch('updateLoading', false)
+        this.$store.commit('updateLoading', false)
         this.$router.push({ name: '個人貼文牆頁', params: { id: this.info._id } })
         return false
       })
@@ -141,7 +141,7 @@ export default {
     getUserPosts (search = this.search) {
       return new Promise((resolve, reject) => {
         this.search = search
-        this.$store.dispatch('updateLoading', true)
+        this.$store.commit('updateLoading', true)
         const config = {
           method: 'GET',
           url: `${process.env.VUE_APP_APIPATH}/api/v1/post/user/${this.id}`,
@@ -153,17 +153,17 @@ export default {
           .then((res) => {
             this.posts = res.data.message
             resolve(res.data.message)
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
           })
           .catch((error) => {
             reject(error.response.data.message)
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
           })
       })
     },
     addFollow () {
       return new Promise((resolve, reject) => {
-        this.$store.dispatch('updateLoading', true)
+        this.$store.commit('updateLoading', true)
         const config = {
           method: 'POST',
           url: `${process.env.VUE_APP_APIPATH}/api/v1/user/${this.id}/follow`,
@@ -176,19 +176,19 @@ export default {
             resolve(res.data.message)
             await this.checkPersonal(this.id)
             await this.getUserPosts()
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
           })
           .catch(async (error) => {
             reject(error.response.data.message)
             await this.checkPersonal(this.id)
             await this.getUserPosts()
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
           })
       })
     },
     removeFollow () {
       return new Promise((resolve, reject) => {
-        this.$store.dispatch('updateLoading', true)
+        this.$store.commit('updateLoading', true)
         const config = {
           method: 'DELETE',
           url: `${process.env.VUE_APP_APIPATH}/api/v1/user/${this.id}/follow`,
@@ -201,13 +201,13 @@ export default {
             resolve(res.data.message)
             await this.checkPersonal(this.id)
             await this.getUserPosts()
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
           })
           .catch(async (error) => {
             reject(error.response.data.message)
             await this.checkPersonal(this.id)
             await this.getUserPosts()
-            this.$store.dispatch('updateLoading', false)
+            this.$store.commit('updateLoading', false)
           })
       })
     }
