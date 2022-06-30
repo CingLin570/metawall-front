@@ -55,6 +55,9 @@ export default createStore({
       context.commit('loading', status)
     }
   },
+  // 類似於使用computed，過濾 state
+  getters: {
+  },
   modules: {
   }
 })
