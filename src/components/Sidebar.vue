@@ -12,7 +12,7 @@
       <ul class="ps-0">
         <li class="card h-100 border-0 mb-4">
           <router-link :to="{ name: '個人貼文牆頁', params: { id: info._id } }">
-                        <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center">
               <img
                 class="img mx-3 img-fluid rounded-circle"
                 :src="info.photo"

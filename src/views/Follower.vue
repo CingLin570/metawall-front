@@ -14,20 +14,25 @@
           v-for="(item, key) in followers" :key="item + key">
             <div class="d-flex justify-content-between align-items-end">
               <div class="d-flex align-items-center">
-                <img
-                  class="img me-3 img-fluid rounded-circle"
-                  src="~@/assets/img/user.png"
-                  alt="user2"
-                  v-if="!item.user.photo"
-                />
-                <img
-                  class="img me-3 img-fluid rounded-circle"
-                  :src="item.user.photo"
-                  alt="user2"
-                  v-else
-                />
+                <router-link :to="{ name: '個人貼文牆頁', params: { id: item.user._id } }">
+                  <img
+                    class="img me-3 img-fluid rounded-circle"
+                    src="~@/assets/img/user.png"
+                    alt="user2"
+                    v-if="!item.user.photo"
+                  />
+                  <img
+                    class="img me-3 img-fluid rounded-circle"
+                    :src="item.user.photo"
+                    alt="user2"
+                    v-else
+                  />
+                </router-link>
                 <div class="d-flex flex-column mt-2">
-                  <a href="#" class="mb-0 fw-bold">{{ item.user.name }}</a>
+                  <router-link :to="{ name: '個人貼文牆頁', params: { id: item.user._id } }">
+                    {{ item.user.name }}
+                  </router-link>
+                  <!-- <a href="#" class="mb-0 fw-bold">{{ item.user.name }}</a> -->
                   <small class="text-muted">追蹤時間：{{ getDate(item.createdAt) }}</small>
                 </div>
               </div>
