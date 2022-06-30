@@ -105,13 +105,13 @@
         <div class="d-flex align-items-center mb-3">
           <router-link :to="{ name: '個人貼文牆頁', params: { id: comment.user._id } }">
           <img
-            class="img me-3 img-fluid"
+            class="img me-3 img-fluid rounded-circle"
             :src="comment.user.photo"
             alt="user"
             v-if="comment.user.photo"
           />
           <img
-            class="img me-3 img-fluid"
+            class="img me-3 img-fluid rounded-circle"
             src="~@/assets/img/user.png"
             alt="user"
             v-else
